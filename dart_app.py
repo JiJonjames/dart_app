@@ -13,43 +13,55 @@ def home():
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>DART Pro Max</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: "Noto Sans KR", -apple-system, BlinkMacSystemFont; background: #FFFFFF; color: #191F28; }
-.container { max-width: 600px; margin: 0 auto; padding: 20px; }
-.header { text-align: center; padding: 40px 0 30px; }
-.header-title { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
-.header-subtitle { font-size: 15px; color: #4E5937; }
-.search-box { position: relative; margin-bottom: 30px; }
-input { width: 100%; padding: 16px; font-size: 16px; border: 1px solid #F3F4F6; border-radius: 12px; background: #F3F4F6; font-family: inherit; }
-input:focus { outline: none; border-color: #0040FF; background: #FFFFFF; }
+html, body { width: 100%; height: 100%; }
+body { font-family: "Noto Sans KR", -apple-system, BlinkMacSystemFont; background: #FFFFFF; color: #191F28; -webkit-font-smoothing: antialiased; }
+.container { width: 100%; max-width: 600px; margin: 0 auto; padding: 16px; padding-bottom: 40px; }
+.header { text-align: center; padding: 32px 0 24px; }
+.header-title { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+.header-subtitle { font-size: 14px; color: #4E5937; }
+.search-box { position: relative; margin-bottom: 24px; }
+input { width: 100%; padding: 14px 16px; font-size: 16px; border: 1px solid #F3F4F6; border-radius: 12px; background: #F3F4F6; font-family: inherit; min-height: 48px; }
+input:active, input:focus { outline: none; border-color: #0040FF; background: #FFFFFF; }
 .autocomplete { position: absolute; top: 100%; left: 0; right: 0; background: #FFFFFF; border: 1px solid #F3F4F6; border-top: none; border-radius: 0 0 12px 12px; max-height: 300px; overflow-y: auto; display: none; z-index: 100; }
 .autocomplete.active { display: block; }
-.autocomplete-item { padding: 12px 16px; cursor: pointer; border-bottom: 1px solid #F3F4F6; font-size: 14px; }
-.autocomplete-item:hover { background: #F3F4F6; }
-.btn { width: 100%; padding: 16px; background: #0040FF; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 30px; }
-.quick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 30px; }
-.quick-btn { padding: 12px; background: #F3F4F6; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; }
-.section { margin-bottom: 16px; border: 1px solid #F3F4F6; border-radius: 16px; overflow: hidden; }
-.section-header { cursor: pointer; padding: 16px; background: #F3F4F6; font-weight: 600; display: flex; justify-content: space-between; align-items: center; user-select: none; }
-.section-header:hover { background: #E5E7EB; }
-.section-content { display: none; padding: 20px; background: #FAFBFC; }
+.autocomplete-item { padding: 14px 16px; cursor: pointer; border-bottom: 1px solid #F3F4F6; font-size: 14px; min-height: 44px; display: flex; align-items: center; }
+.autocomplete-item:active { background: #F3F4F6; }
+.btn { width: 100%; padding: 16px; background: #0040FF; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; margin-bottom: 24px; min-height: 48px; }
+.btn:active { opacity: 0.8; }
+.quick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 24px; }
+.quick-btn { padding: 12px 8px; background: #F3F4F6; border: none; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; font-family: inherit; min-height: 44px; }
+.quick-btn:active { background: #E5E7EB; }
+.section { margin-bottom: 12px; border: 1px solid #F3F4F6; border-radius: 16px; overflow: hidden; }
+.section-header { cursor: pointer; padding: 14px 16px; background: #F3F4F6; font-weight: 600; display: flex; justify-content: space-between; align-items: center; user-select: none; min-height: 50px; }
+.section-header:active { background: #E5E7EB; }
+.section-content { display: none; padding: 16px; background: #FAFBFC; overflow-x: auto; }
 .section-content.show { display: block; }
-table { width: 100%; border-collapse: collapse; margin: 0; }
-th { background: #F3F4F6; padding: 12px; text-align: left; font-size: 13px; font-weight: 600; }
-td { padding: 12px; border-bottom: 1px solid #F3F4F6; }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { background: #F3F4F6; padding: 10px; text-align: left; font-size: 12px; font-weight: 600; }
+td { padding: 10px; border-bottom: 1px solid #F3F4F6; }
 .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .info-item { background: #F3F4F6; padding: 12px; border-radius: 8px; }
 .info-label { font-size: 12px; color: #4E5937; margin-bottom: 4px; }
-.info-value { font-size: 14px; font-weight: 600; }
-.result { margin-top: 30px; margin-bottom: 100px; }
-.result-title { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
-.result-sector { font-size: 13px; color: #4E5937; margin-bottom: 30px; }
-.chart-container { position: relative; height: 300px; margin: 20px 0; }
+.info-value { font-size: 15px; font-weight: 600; }
+.result { margin-top: 24px; margin-bottom: 60px; }
+.result-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+.result-sector { font-size: 13px; color: #4E5937; margin-bottom: 24px; }
+.chart-container { position: relative; height: 280px; margin: 16px 0; }
+@media (max-width: 480px) {
+.header-title { font-size: 26px; }
+.container { padding: 12px; }
+.quick { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+.info-grid { grid-template-columns: 1fr; }
+}
+@media (min-width: 768px) {
+.container { padding: 24px; }
+}
 </style>
 </head>
 <body>
