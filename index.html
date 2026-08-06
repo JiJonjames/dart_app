@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>DART Pro Max</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Noto Sans KR'; background: #fff; color: #191F28; max-width: 600px; margin: 0 auto; padding: 20px; }
+        h1 { text-align: center; font-size: 32px; margin-bottom: 10px; }
+        .subtitle { text-align: center; color: #666; margin-bottom: 40px; }
+        input, button { font-family: inherit; width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 12px; box-sizing: border-box; }
+        button { background: #0040FF; color: white; border: none; cursor: pointer; }
+        button:hover { background: #0035CC; }
+        .quick { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 30px; }
+        .quick button { margin: 0; padding: 10px; font-size: 12px; background: #f0f0f0; color: #191F28; }
+        .section { margin: 20px 0; border: 1px solid #ddd; border-radius: 8px; }
+        .section-header { cursor: pointer; padding: 16px; background: #f5f5f5; font-weight: 600; user-select: none; }
+        .section-header:hover { background: #eee; }
+        .section-content { display: none; padding: 16px; background: #fafafa; }
+        .show { display: block; }
+        table { width: 100%; border-collapse: collapse; margin: 15px 0; }
+        th { background: #f0f0f0; padding: 10px; text-align: left; font-weight: 600; border-bottom: 1px solid #ddd; }
+        td { padding: 10px; border-bottom: 1px solid #eee; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .box { background: #f0f0f0; padding: 12px; border-radius: 6px; }
+        .label { font-size: 12px; color: #666; }
+        .value { font-size: 14px; font-weight: 600; margin-top: 4px; }
+    </style>
+</head>
+<body>
+    <h1>DART Pro Max</h1>
+    <p class="subtitle">기업 재무 분석</p>
+    <input type="text" id="ticker" placeholder="티커 입력 (예: AAPL)">
+    <button onclick="search()">검색</button>
+    <div class="quick">
+        <button onclick="search2('AAPL')">AAPL</button>
+        <button onclick="search2('MSFT')">MSFT</button>
+        <button onclick="search2('GOOGL')">GOOGL</button>
+        <button onclick="search2('TSLA')">TSLA</button>
+    </div>
+    <div id="result"></div>
+
+    <script>
+        function search2(s) { document.getElementById('ticker').value = s; search(); }
+        function toggle(id) { document.getElementById(id).classList.toggle('show'); }
+        function search() {
+            var t = document.getElementById('ticker').value.toUpperCase().trim();
+            if (!t) return alert('입력하세요');
+            document.getElementById('result').innerHTML = '로딩...';
+            fetch('/api/search/' + t)
+                .then(r => r.json())
+                .then(d => {
+                    if (d.error) {
+                        document.getElementById('result').innerHTML = '<p style="color:red;">오류: ' + d.error + '</p>';
+                    } else {
+                        var h = '<h2>' + d.name + '</h2><p>' + d.sector + '</p>';
+                        h += '<div class="section"><div class="section-header" onclick="toggle(' + "'s1'" + ')">📈 주가 정보</div><div class="section-content" id="s1"><div class="grid"><div class="box"><div class="label">현재가</div><div class="value">$' + d.stock_price + '</div></div><div class="box"><div class="label">시가</div><div class="value">$' + d.open_price + '</div></div></div></div></div>';
+                        h += '<div class="section"><div class="section-header" onclick="toggle(' + "'s2'" + ')">📊 연간 재무</div><div class="section-content" id="s2"><table><tr><th>연도</th><th>매출</th><th>영업이익</th><th>순이익</th></tr>';
+                        d.years.forEach(y => { h += '<tr><td>' + y.year + '</td><td>$' + y.revenue.toFixed(1) + 'B</td><td>$' + y.operating_income.toFixed(1) + 'B</td><td>$' + y.net_income.toFixed(1) + 'B</td></tr>'; });
+                        h += '</table></div></div>';
+                        h += '<div class="section"><div class="section-header" onclick="toggle(' + "'s3'" + ')">📈 재무비율</div><div class="section-content" id="s3"><div class="grid"><div class="box"><div class="label">ROE</div><div class="value">' + d.roe + '%</div></div><div class="box"><div class="label">ROA</div><div class="value">' + d.roa + '%</div></div><div class="box"><div class="label">부채비율</div><div class="value">' + d.debt_ratio + '%</div></div><div class="box"><div class="label">자산회전율</div><div class="value">' + d.asset_turnover + '</div></div></div></div></div>';
+                        h += '<div class="section"><div class="section-header" onclick="toggle(' + "'s4'" + ')">🏢 기업 정보</div><div class="section-content" id="s4"><div class="grid"><div class="box"><div class="label">CEO</div><div class="value">' + d.ceo + '</div></div><div class="box"><div class="label">직원 수</div><div class="value">' + d.employees + '</div></div></div></div></div>';
+                        document.getElementById('result').innerHTML = h;
+                    }
+                });
+        }
+    </script>
+</body>
+</html>
